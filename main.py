@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Path, Body, Request
+from fastapi import FastAPI, Path, Body, Request, Form
 from typing import List
 from pydantic import BaseModel, Field
 from fastapi.responses import HTMLResponse
@@ -93,6 +93,47 @@ async def hello():
    return HTMLResponse(content=ret)
 
 
+#  This is a templateResponse()
+#  This is Hello World
+
 @app.get("/hello/",response_class=HTMLResponse)
 async def hello(request: Request):
     return templates.TemplateResponse("hello.html", {"request": request})
+
+
+# This is with Name - Welcome
+@app.get("/hello/{name}", response_class=HTMLResponse)
+async def hello(request: Request, name:str):
+   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
+
+
+
+# This is for the FAST Api Logo (Static Files)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+@app.get("/hello/{name}", response_class=HTMLResponse)
+async def hello(request: Request, name:str):
+   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
+
+
+# This is Login Function
+@app.get("/login/", response_class=HTMLResponse)
+async def login(request: Request):
+   return templates.TemplateResponse("login.html", {"request": request})
+
+
+# This is for Submit
+@app.post("/submit/")
+async def submit(nm: str = Form(...), pwd: str = Form(...)):
+   return {"username": nm}
+
+
+class User(BaseModel):
+   username:str
+   password:str
+
+
+@app.post("/submit/", response_model=User)
+async def submit(nm: str = Form(...), pwd: str = Form(...)):
+   return User(username=nm, password=pwd)
+
