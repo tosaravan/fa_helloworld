@@ -4,6 +4,7 @@ from typing import List
 from pydantic import BaseModel, Field
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 # Declaring the FastAPI as "app"
 app = FastAPI()
