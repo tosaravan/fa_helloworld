@@ -12,6 +12,54 @@ app = FastAPI()
 # Declaring the Template Object
 templates = Jinja2Templates(directory="templates")
 
+# Parameter for mount
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# This is for the FAST Api Logo (Static Files)
+
+
+@app.get("/hello/{name}", response_class=HTMLResponse)
+async def hello(request: Request, name:str):
+   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
+
+
+#  This is a templateResponse()
+#  This is Hello World
+
+@app.get("/hello/",response_class=HTMLResponse)
+async def hello(request: Request):
+    return templates.TemplateResponse("hello.html", {"request": request})
+
+
+# This is with Name - Welcome (Templates Moved UP)
+@app.get("/hello/{name}", response_class=HTMLResponse)
+async def hello(request: Request, name:str):
+   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
+
+
+# This is for the login template
+
+@app.get("/login/", response_class=HTMLResponse)
+async def login(request: Request):
+   return templates.TemplateResponse("login.html", {"request": request})
+
+# This is for Submit
+@app.post("/submit/")
+async def submit(nm: str = Form(...), pwd: str = Form(...)):
+   return {"username": nm}
+
+
+# This is another alternative for submit function (using models)
+
+class User(BaseModel):
+   username:str
+   password:str
+
+
+@app.post("/submit/", response_model=User)
+async def submit(nm: str = Form(...), pwd: str = Form(...)):
+   return User(username=nm, password=pwd)
+
 
 @app.get("/")
 async def root():
@@ -45,7 +93,7 @@ async def say_hello(name: str, age: int):
 # This is the parameter validation
 @app.get("/hello/{name}")
 async def hello(name: str = Path(...,min_length=3,max_length=10)):
-    return {"name": name}
+  return {"name": name}
 
 
 # This is with the numeric parameters
@@ -80,61 +128,4 @@ async def student_data(college: str, age: int, student: Student):
     return retval
 
 
-# Hello World From HTML Response
-@app.get("/hello/")
-async def hello():
-   ret = '''
-<html>
-<body>
-<h2>Hello World!</h2>
-</body>
-</html>
-'''
-
-   return HTMLResponse(content=ret)
-
-
-#  This is a templateResponse()
-#  This is Hello World
-
-@app.get("/hello/",response_class=HTMLResponse)
-async def hello(request: Request):
-    return templates.TemplateResponse("hello.html", {"request": request})
-
-
-# This is with Name - Welcome
-@app.get("/hello/{name}", response_class=HTMLResponse)
-async def hello(request: Request, name:str):
-   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
-
-
-
-# This is for the FAST Api Logo (Static Files)
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-@app.get("/hello/{name}", response_class=HTMLResponse)
-async def hello(request: Request, name:str):
-   return templates.TemplateResponse("hello.html", {"request": request, "name":name})
-
-
-# This is Login Function
-@app.get("/login/", response_class=HTMLResponse)
-async def login(request: Request):
-   return templates.TemplateResponse("login.html", {"request": request})
-
-
-# This is for Submit
-@app.post("/submit/")
-async def submit(nm: str = Form(...), pwd: str = Form(...)):
-   return {"username": nm}
-
-
-class User(BaseModel):
-   username:str
-   password:str
-
-
-@app.post("/submit/", response_model=User)
-async def submit(nm: str = Form(...), pwd: str = Form(...)):
-   return User(username=nm, password=pwd)
 
