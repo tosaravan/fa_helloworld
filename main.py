@@ -1,8 +1,9 @@
 import uvicorn
-from fastapi import FastAPI, Path, Body, Request, Form
-from typing import List
+import shutil
+from fastapi import FastAPI, Path, Body, Request, Form, File, UploadFile, Cookie, Header
+from typing import List, Optional, Tuple
 from pydantic import BaseModel, Field
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
@@ -63,6 +64,107 @@ async def submit(nm: str = Form(...), pwd: str = Form(...)):
     return User(username=nm, password=pwd)
 
 
+# Uploading files
+
+@app.get("/upload/", response_class=HTMLResponse)
+async def upload(request: Request):
+   return templates.TemplateResponse("uploadfile.html", {"request": request})
+
+
+# Uploader Operation
+
+async def create_upload_file(file: UploadFile = File(...)):
+   with open("destination.png", "wb") as buffer:
+      shutil.copyfileobj(file.file, buffer)
+   return {"filename": file.filename}
+
+
+# Cookie Parameter - (set cookie method)
+# Create Cookie
+@app.post("/cookie/")
+def create_cookie():
+   content = {"message": "cookie set"}
+   response = JSONResponse(content=content)
+   response.set_cookie(key="username", value="admin")
+   return response
+
+
+# To read the Cookie
+
+@app.get("/readcookie/")
+async def read_cookie(username: str = Cookie(None)):
+   return {"username": username}
+
+
+# This is the Header Parameter
+@app.get("/headers/")
+async def read_header(accept_language: Optional[str] = Header(None)):
+   return {"Accept-Language": accept_language}
+
+
+# This is Response Type Header
+@app.get("/rspheader/")
+def set_rsp_headers():
+   content = {"message": "Hello World"}
+   headers = {"X-Web-Framework": "FastAPI", "Content-Language": "en-US"}
+   return JSONResponse(content=content, headers=headers)
+
+
+# Response Model Parameter
+
+
+# Students Model
+class student(BaseModel):
+   id: int
+   name :str = Field(None, title="name of student", max_length=10)
+   marks: List[int] = []
+   percent_marks: float
+
+
+# Precent Model (Response Model)
+class percent(BaseModel):
+   id:int
+   name :str = Field(None, title="name of student", max_length=10)
+   percent_marks: float
+
+
+# Response Model - Percentage of Students
+@app.post("/marks", response_model=percent)
+async def get_percent(s1:student):
+   s1.percent_marks=sum(s1.marks)/2
+   return s1
+
+
+# Response Model
+
+# Model for Supplier
+class supplier(BaseModel):
+   supplierID:int
+   supplierName:str
+
+
+# Model for Product
+class product(BaseModel):
+   productID:int
+   prodname:str
+   price:int
+   supp:supplier
+
+
+# Model for  customer
+class customer(BaseModel):
+   custID:int
+   custname:str
+   prod:Tuple[product]
+
+
+# To generate the invoice
+
+@app.post('/invoice')
+async def getInvoice(c1:customer):
+   return c1
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -103,27 +205,4 @@ async def hello(name: str = Path(..., min_length=3, max_length=10), age: int = P
     return {"name": name, "age": age}
 
 
-# Model for Students
-class Student(BaseModel):
-    id: int
-    name: str = Field(None, title="name of student", max_length=10)
-    subjects: List[str] = []
 
-
-# Request Body with POST
-@app.post("/students/")
-async def student_data(s1: Student):
-    return s1
-
-
-# Request Body with Body Class
-@app.post("/students/")
-async def student_data(name: str = Body(...), marks: int = Body(...)):
-    return {"name": name, "marks": marks}
-
-
-# Request Body with path parameter
-@app.post("/students/{college}")
-async def student_data(college: str, age: int, student: Student):
-    retval = {"college": college, "age": age, **student.dict()}
-    return retval
