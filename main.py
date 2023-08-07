@@ -1,11 +1,16 @@
 import uvicorn
 import shutil
-from fastapi import FastAPI, Path, Body, Request, Form, File, UploadFile, Cookie, Header
+from fastapi import FastAPI, Path, Body, Request, Form, File, UploadFile, Cookie, Header, Depends
 from typing import List, Optional, Tuple
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, constr
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.dialects.sqlite import *
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.declarative import declarative_base
+
 
 # Declaring the FastAPI as "app"
 app = FastAPI()
@@ -164,6 +169,149 @@ class customer(BaseModel):
 async def getInvoice(c1:customer):
    return c1
 
+
+#  Pydantic Model for Class
+
+data = []
+class Book1(BaseModel):
+   id: int
+   title: str
+   author: str
+   publisher: str
+
+
+# This is function to create add a book
+@app.post("/book")
+def add_book(book: Book1):
+   data.append(book.dict())
+   return data
+
+
+# To Retrieve the data of the added books
+@app.get("/list")
+def get_books():
+   return data
+
+
+# To Retrieve the books with the ID Parameter
+
+@app.get("/book/{id}")
+def get_book(id: int):
+   id = id - 1
+   return data[id]
+
+
+# PUT decorator that modifies an object in the data list with the ID parameter
+
+@app.put("/book/{id}")
+def add_book(id: int, book: Book1):
+   data[id-1] = book
+   return data
+
+
+# DELETE decorater to delete an object with ID parameter
+
+@app.delete("/book/{id}")
+def delete_book(id: int):
+   data.pop(id-1)
+   return data
+
+
+# SQL Database
+# Creating a database engine for our database called test.db
+
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args = {"check_same_thread": False})
+
+
+# Session object (handle) to obtain the Database.
+
+session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Declarative base for storing the Classes and the mapped tables.
+
+Base = declarative_base()
+
+
+# Creating the table
+
+class Books(Base):
+   __tablename__ = 'book'
+   id = Column(Integer, primary_key=True, nullable=False)
+   title = Column(String(50), unique=True)
+   author = Column(String(50))
+   publisher = Column(String(50))
+   Base.metadata.create_all(bind=engine)
+# create_all() method creates the corresponding tables in the database
+
+
+# Pydantic model that corresponds to the declarative base
+
+class Book(BaseModel):
+   id: int
+   title: str
+   author:str
+   publisher: str
+   class Config:
+      orm_mode = True
+
+# CRUD operations with the database through SQL alchemy
+
+def get_db():
+   db = session()
+   try:
+      yield db
+   finally:
+    db.close()
+
+# To Add a Book
+
+@app.post('/add_new', response_model=Book)
+def add_book(b1: Book, db: Session = Depends(get_db)):
+   bk=Books(id=b1.id, title=b1.title, author=b1.author, publisher=b1.publisher)
+   db.add(bk)
+   db.commit()
+   db.refresh(bk)
+   return Books(**b1.dict())
+
+
+# To get all the records of the book
+
+@app.get('/list', response_model=List[Book])
+def get_books(db: Session = Depends(get_db)):
+   recs = db.query(Books).all()
+   return recs
+
+
+# With the path parameter
+
+@app.get('/book/{id}', response_model=Book)
+def get_book(id:int, db: Session = Depends(get_db)):
+   return db.query(Books).filter(Books.id == id).first()
+
+
+# To Update the book records
+
+@app.put('/update/{id}', response_model=Book)
+def update_book(id:int, book:Book, db: Session = Depends(get_db)):
+   b1 = db.query(Books).filter(Books.id == id).first()
+   b1.id=book.id
+   b1.title=book.title
+   b1.author=book.author
+   b1.publisher=book.publisher
+   db.commit()
+   return db.query(Books).filter(Books.id == id).first()
+
+
+# To delete the book
+@app.delete('/delete/{id}')
+def del_book(id:int, db: Session = Depends(get_db)):
+   try:
+      db.query(Books).filter(Books.id == id).delete()
+      db.commit()
+   except Exception as e:
+      raise Exception(e)
+   return {"delete status": "success"}
 
 @app.get("/")
 async def root():
