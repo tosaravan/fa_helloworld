@@ -11,7 +11,6 @@ from sqlalchemy.dialects.sqlite import *
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 
-
 # Declaring the FastAPI as "app"
 app = FastAPI()
 
@@ -73,46 +72,46 @@ async def submit(nm: str = Form(...), pwd: str = Form(...)):
 
 @app.get("/upload/", response_class=HTMLResponse)
 async def upload(request: Request):
-   return templates.TemplateResponse("uploadfile.html", {"request": request})
+    return templates.TemplateResponse("uploadfile.html", {"request": request})
 
 
 # Uploader Operation
 
 async def create_upload_file(file: UploadFile = File(...)):
-   with open("destination.png", "wb") as buffer:
-      shutil.copyfileobj(file.file, buffer)
-   return {"filename": file.filename}
+    with open("destination.png", "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return {"filename": file.filename}
 
 
 # Cookie Parameter - (set cookie method)
 # Create Cookie
 @app.post("/cookie/")
 def create_cookie():
-   content = {"message": "cookie set"}
-   response = JSONResponse(content=content)
-   response.set_cookie(key="username", value="admin")
-   return response
+    content = {"message": "cookie set"}
+    response = JSONResponse(content=content)
+    response.set_cookie(key="username", value="admin")
+    return response
 
 
 # To read the Cookie
 
 @app.get("/readcookie/")
 async def read_cookie(username: str = Cookie(None)):
-   return {"username": username}
+    return {"username": username}
 
 
 # This is the Header Parameter
 @app.get("/headers/")
 async def read_header(accept_language: Optional[str] = Header(None)):
-   return {"Accept-Language": accept_language}
+    return {"Accept-Language": accept_language}
 
 
 # This is Response Type Header
 @app.get("/rspheader/")
 def set_rsp_headers():
-   content = {"message": "Hello World"}
-   headers = {"X-Web-Framework": "FastAPI", "Content-Language": "en-US"}
-   return JSONResponse(content=content, headers=headers)
+    content = {"message": "Hello World"}
+    headers = {"X-Web-Framework": "FastAPI", "Content-Language": "en-US"}
+    return JSONResponse(content=content, headers=headers)
 
 
 # Response Model Parameter
@@ -120,109 +119,110 @@ def set_rsp_headers():
 
 # Students Model
 class student(BaseModel):
-   id: int
-   name :str = Field(None, title="name of student", max_length=10)
-   marks: List[int] = []
-   percent_marks: float
+    id: int
+    name: str = Field(None, title="name of student", max_length=10)
+    marks: List[int] = []
+    percent_marks: float
 
 
 # Precent Model (Response Model)
 class percent(BaseModel):
-   id:int
-   name :str = Field(None, title="name of student", max_length=10)
-   percent_marks: float
+    id: int
+    name: str = Field(None, title="name of student", max_length=10)
+    percent_marks: float
 
 
 # Response Model - Percentage of Students
 @app.post("/marks", response_model=percent)
-async def get_percent(s1:student):
-   s1.percent_marks=sum(s1.marks)/2
-   return s1
+async def get_percent(s1: student):
+    s1.percent_marks = sum(s1.marks) / 2
+    return s1
 
 
 # Response Model
 
 # Model for Supplier
 class supplier(BaseModel):
-   supplierID:int
-   supplierName:str
+    supplierID: int
+    supplierName: str
 
 
 # Model for Product
 class product(BaseModel):
-   productID:int
-   prodname:str
-   price:int
-   supp:supplier
+    productID: int
+    prodname: str
+    price: int
+    supp: supplier
 
 
 # Model for  customer
 class customer(BaseModel):
-   custID:int
-   custname:str
-   prod:Tuple[product]
+    custID: int
+    custname: str
+    prod: Tuple[product]
 
 
 # To generate the invoice
 
 @app.post('/invoice')
-async def getInvoice(c1:customer):
-   return c1
+async def getInvoice(c1: customer):
+    return c1
 
 
 #  Pydantic Model for Class
 
 data = []
+
+
 class Book1(BaseModel):
-   id: int
-   title: str
-   author: str
-   publisher: str
+    id: int
+    title: str
+    author: str
+    publisher: str
 
 
 # This is function to create add a book
 @app.post("/book")
 def add_book(book: Book1):
-   data.append(book.dict())
-   return data
+    data.append(book.dict())
+    return data
 
 
 # To Retrieve the data of the added books
 @app.get("/list")
 def get_books():
-   return data
+    return data
 
 
 # To Retrieve the books with the ID Parameter
 
 @app.get("/book/{id}")
 def get_book(id: int):
-   id = id - 1
-   return data[id]
+    id = id - 1
+    return data[id]
 
 
 # PUT decorator that modifies an object in the data list with the ID parameter
 
 @app.put("/book/{id}")
 def add_book(id: int, book: Book1):
-   data[id-1] = book
-   return data
+    data[id - 1] = book
+    return data
 
 
 # DELETE decorater to delete an object with ID parameter
 
 @app.delete("/book/{id}")
 def delete_book(id: int):
-   data.pop(id-1)
-   return data
+    data.pop(id - 1)
+    return data
 
 
 # SQL Database
 # Creating a database engine for our database called test.db
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args = {"check_same_thread": False})
-
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 # Session object (handle) to obtain the Database.
 
@@ -236,82 +236,92 @@ Base = declarative_base()
 # Creating the table
 
 class Books(Base):
-   __tablename__ = 'book'
-   id = Column(Integer, primary_key=True, nullable=False)
-   title = Column(String(50), unique=True)
-   author = Column(String(50))
-   publisher = Column(String(50))
-   Base.metadata.create_all(bind=engine)
+    __tablename__ = 'book'
+    id = Column(Integer, primary_key=True, nullable=False)
+    title = Column(String(50), unique=True)
+    author = Column(String(50))
+    publisher = Column(String(50))
+    Base.metadata.create_all(bind=engine)
+
+
 # create_all() method creates the corresponding tables in the database
 
 
 # Pydantic model that corresponds to the declarative base
 
 class Book(BaseModel):
-   id: int
-   title: str
-   author:str
-   publisher: str
-   class Config:
-      orm_mode = True
+    id: int
+    title: str
+    author: str
+    publisher: str
 
+    class Config:
+        orm_mode = True
+
+
+# Inclusion for creating a table (Sarvanan)
+
+Base.metadata.create_all(bind=engine)
 # CRUD operations with the database through SQL alchemy
 
+
 def get_db():
-   db = session()
-   try:
-      yield db
-   finally:
-    db.close()
+    db = session()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # To Add a Book
 
 @app.post('/add_new', response_model=Book)
 def add_book(b1: Book, db: Session = Depends(get_db)):
-   bk=Books(id=b1.id, title=b1.title, author=b1.author, publisher=b1.publisher)
-   db.add(bk)
-   db.commit()
-   db.refresh(bk)
-   return Books(**b1.dict())
+    bk = Books(id=b1.id, title=b1.title, author=b1.author, publisher=b1.publisher)
+    db.add(bk)
+    db.commit()
+    db.refresh(bk)
+    return Books(**b1.dict())
 
 
 # To get all the records of the book
 
 @app.get('/list', response_model=List[Book])
 def get_books(db: Session = Depends(get_db)):
-   recs = db.query(Books).all()
-   return recs
+    recs = db.query(Books).all()
+    return recs
 
 
 # With the path parameter
 
 @app.get('/book/{id}', response_model=Book)
-def get_book(id:int, db: Session = Depends(get_db)):
-   return db.query(Books).filter(Books.id == id).first()
+def get_book(id: int, db: Session = Depends(get_db)):
+    return db.query(Books).filter(Books.id == id).first()
 
 
 # To Update the book records
 
 @app.put('/update/{id}', response_model=Book)
-def update_book(id:int, book:Book, db: Session = Depends(get_db)):
-   b1 = db.query(Books).filter(Books.id == id).first()
-   b1.id=book.id
-   b1.title=book.title
-   b1.author=book.author
-   b1.publisher=book.publisher
-   db.commit()
-   return db.query(Books).filter(Books.id == id).first()
+def update_book(id: int, book: Book, db: Session = Depends(get_db)):
+    b1 = db.query(Books).filter(Books.id == id).first()
+    b1.id = book.id
+    b1.title = book.title
+    b1.author = book.author
+    b1.publisher = book.publisher
+    db.commit()
+    return db.query(Books).filter(Books.id == id).first()
 
 
 # To delete the book
 @app.delete('/delete/{id}')
-def del_book(id:int, db: Session = Depends(get_db)):
-   try:
-      db.query(Books).filter(Books.id == id).delete()
-      db.commit()
-   except Exception as e:
-      raise Exception(e)
-   return {"delete status": "success"}
+def del_book(id: int, db: Session = Depends(get_db)):
+    try:
+        db.query(Books).filter(Books.id == id).delete()
+        db.commit()
+    except Exception as e:
+        raise Exception(e)
+    return {"delete status": "success"}
+
 
 @app.get("/")
 async def root():
@@ -351,6 +361,3 @@ async def hello(name: str = Path(..., min_length=3, max_length=10)):
 @app.get("/hello/{name}/{age}")
 async def hello(name: str = Path(..., min_length=3, max_length=10), age: int = Path(..., ge=1, le=100)):
     return {"name": name, "age": age}
-
-
-
