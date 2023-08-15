@@ -11,7 +11,7 @@ from pydantic import BaseModel, constr
 # Creating a database engine for User usermgt.tb
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./usermgt.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args = {"check_same_thread": False})
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
 # Session object (handle) to obtain the Database
 session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -29,11 +29,14 @@ usermgt = APIRouter(
 
 # User Model
 class Users(Base):
-    userid: Column(Integer, primary_key=True, nullable=False)
+    __tablename__ = 'user_table'
+
+    userid: Column(Integer, primary_key=True, autoincrement=True)
     firstname: Column(String(100))
     lastname: Column(String(50))
     email: Column(String(50), unique=True)
     mobile: Column(String(50), unique=True)
+
 # Create_all() method creates the corresponding tables in the database
     Base.metadata.create_all(bind=engine)
 
@@ -53,6 +56,7 @@ class User(BaseModel):
 
 Base.metadata.create_all(bind=engine)
 
+
 def get_db():
    db = session()
    try:
@@ -63,7 +67,7 @@ def get_db():
 
 # To add Users
 @usermgt.post("/add_user", response_model=User)
-def add_user(u1: User, db: Session = Depends(get_db):
+def add_user(u1: User, db: Session = Depends(get_db)):
     um = Users(userid=u1.userid, firstname=u1.firstname, lastname=u1.lastname, email=u1.email, mobile=u1.mobile)
     db.add(um)
     db.commit()
@@ -81,5 +85,5 @@ def get_users(db: Session = Depends(get_db)):
 
 # To get the users with the ID
 @usermgt.get("/user/{id}", response_model=User)
-def get_user(id:int, db: Session = Depends(get_db)):
-    return db.query(Users).filter(Users.userid==id).first()
+def get_user(usid: int, db: Session = Depends(get_db)):
+    return db.query(Users).filter(Users.userid == usid).first()
