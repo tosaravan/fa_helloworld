@@ -5,7 +5,7 @@ description = "Fast API Hello World"
 authors = ["SR"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 uvicorn = "~0.11.3"
 fastapi = "~0.68.0"
 python-multipart = "~0.0.6"
@@ -13,3 +13,4 @@ pydantic = {extras = ["email"], version = "~1.8.1"}
 jinja2 = "^3.0.3"
 aiofiles = "^23.1.0"
 sqlalchemy = "^2.0.19"
+bcrypt = "^4.0.1"
