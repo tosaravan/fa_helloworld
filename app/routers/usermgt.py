@@ -20,6 +20,12 @@ def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users
 
 
+@router.get("/user_email",)
+def get_users_email_id(email: str = 0, db: Session = Depends(get_db)):
+    users_email = crud.get_user_by_email(db, email=crud.get_user_by_email())
+
+    return users_email
+
 @router.post('/', response_model=schemas.User, )
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
