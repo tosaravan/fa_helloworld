@@ -2,3 +2,4 @@
 /.venv/
 /fa_helloworld.iml
 /poetry.lock
+/test.db
