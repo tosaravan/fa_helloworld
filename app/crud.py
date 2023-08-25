@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import and_
 from . import models, schemas
 from .helper import *
 
@@ -10,6 +10,10 @@ def get_user(db: Session, user_id: int):
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_user_by_name(db: Session, firstname: str, lastname: str):
+    return db.query(models.User).filter(and_(models.User.firstname == firstname, models.User.lastname == lastname)).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):

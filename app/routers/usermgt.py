@@ -20,11 +20,33 @@ def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users
 
 
-@router.get("/user_email",)
-def get_users_email_id(email: str = 0, db: Session = Depends(get_db)):
-    users_email = crud.get_user_by_email(db, email=crud.get_user_by_email())
+@router.get("/email")
+def get_user_email(email: str,  db: Session = Depends(get_db)):
+    return crud.get_user_by_email(db, email=email)
 
-    return users_email
+
+@router.get("/search")
+def get_user_by_name(firstname : str, lastname : str,  db: Session = Depends(get_db)):
+    return crud.get_user_by_name(db,firstname=firstname,lastname=lastname)
+
+
+@router.get("/users/username", tags=["users"])
+async def get_username(username: str):
+    return {"username": username}
+
+
+@router.get("/users",tags=["users"])
+async def username(user_name: str, designation: str):
+    return {"user_name": user_name, "designation": designation}
+
+
+@router.get("/hello", tags=["users"])
+async def hello(name:str,age:int):
+   return {"name": name, "age":age}
+
+@router.get("/hello/{name}/{age}")
+async def hello(name,age):
+   return {"name": name, "age":age}
 
 @router.post('/', response_model=schemas.User, )
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
