@@ -1,13 +1,25 @@
+import pytest
 from fastapi.testclient import TestClient
 
+from app import models
+from app.database import Base
 from app.main import app
+from app.database import engine
 
 client = TestClient(app)
 
-user_payload = {"firstname": "foobar", "lastname": "Foo Bar", "email": "The Foo Barters", "mobile": "Foo Bar", "password": "Foo Bar"}
+user_payload = {"firstname": "foobar", "lastname": "Foo Bar", "email": "The Foo Barters", "mobile": "Foo Bar",
+                "password": "Foo Bar"}
 
 
-def test_create_user():
+@pytest.fixture()
+def test_db():
+    models.Base.metadata.create_all(bind=engine)
+    yield
+    models.Base.metadata.drop_all(bind=engine)
+
+
+def test_create_user(test_db):
     response = client.post(
         "/usermgt/",
         # headers={"X-Token": "coneofsilence"},
@@ -19,4 +31,4 @@ def test_create_user():
                                "id": 1,
                                "is_active": True,
                                "lastname": "Foo Bar",
-                               "mobile": "Foo Bar"} 
+                               "mobile": "Foo Bar"}
