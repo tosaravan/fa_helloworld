@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from pydantic import BaseModel
 
 
@@ -19,3 +19,14 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class ShoppingItemRequest(BaseModel):
+    product_name: str
+    product_cost:  float
+    total_units: int
+
+
+class ShoppingCartRequest(BaseModel):
+    customer_name: str
+    items: List[ShoppingItemRequest]

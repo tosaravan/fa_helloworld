@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import schemas, crud
+from app import crud, schemas
 from app.dbutil import get_db
 
 # Defining a Router
@@ -44,9 +44,11 @@ async def username(user_name: str, designation: str):
 async def hello(name:str,age:int):
    return {"name": name, "age":age}
 
+
 @router.get("/hello/{name}/{age}")
 async def hello(name,age):
    return {"name": name, "age":age}
+
 
 @router.post('/', response_model=schemas.User, )
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -56,3 +58,15 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered.")
 
     return crud.create_user(db=db, user=user)
+
+
+@router.post('/cart')
+def create_shopping_cart(cart_usermgt: schemas.ShoppingCartRequest, db_usermgt: Session = Depends(get_db)):
+
+    print(cart_usermgt.customer_name)
+    for item in cart_usermgt.items:
+        print("Product Name:", item.product_name)
+        print("Product Cost:", item.product_cost)
+        print("Total Units:", item.total_units)
+        print("---")
+    return crud.create_shopping_cart(db_usermgt, cart_usermgt)

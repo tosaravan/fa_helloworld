@@ -13,7 +13,8 @@ def get_user_by_email(db: Session, email: str):
 
 
 def get_user_by_name(db: Session, firstname: str, lastname: str):
-    return db.query(models.User).filter(and_(models.User.firstname == firstname, models.User.lastname == lastname)).first()
+    return db.query(models.User).filter(
+        and_(models.User.firstname == firstname, models.User.lastname == lastname)).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -22,9 +23,20 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_hashed_password(plain_text_password=user.password.encode("utf-8"))
-    db_user = models.User(firstname=user.firstname,lastname=user.lastname,email=user.email,mobile=user.mobile,hashed_password=hashed_password)
+    db_user = models.User(firstname=user.firstname, lastname=user.lastname, email=user.email, mobile=user.mobile,
+                          hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
 
     return db_user
+
+
+def create_shopping_cart(db: Session, shopping_cart: schemas.ShoppingCartRequest):
+
+    db_customer = models.ShoppingCart(shopping_cart.customer_name)
+    db.add(db_customer)
+    db.commit()
+    db.refresh(db_customer)
+
+
