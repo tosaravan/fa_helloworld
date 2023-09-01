@@ -21,14 +21,14 @@ class ShoppingCart(Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_name = Column(String, index=True)
 
-    items = relationship("ShoppingItems", back_populates="cart")
+    items = relationship("ShoppingItem", back_populates="cart")
 
 
-class ShoppingItems(Base):
+class ShoppingItem(Base):
     __tablename__ = "shopping_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    product_name = Column(String, unique=True, index=True)
+    product_name = Column(String, index=True)
     product_cost = Column(Float)
     total_units = Column(Integer)
     cart_id = Column(Integer, ForeignKey(ShoppingCart.id))

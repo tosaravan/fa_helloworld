@@ -1,7 +1,10 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from . import models, schemas
 from .helper import *
+from .models import ShoppingItem
 
 
 def get_user(db: Session, user_id: int):
@@ -33,10 +36,16 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def create_shopping_cart(db: Session, shopping_cart: schemas.ShoppingCartRequest):
+    # shopping_items = [x for x in shopping_cart.items] TODO should use composition rather iteration as below
+    shopping_items: List = []
+    for item in shopping_cart.items:
+        item = ShoppingItem(product_name=item.product_name, product_cost=item.product_cost, total_units=item.total_units)
+        shopping_items.append(item)
 
-    db_customer = models.ShoppingCart(shopping_cart.customer_name)
-    db.add(db_customer)
+    db_cart = models.ShoppingCart(customer_name=shopping_cart.customer_name, items=shopping_items)
+    db.add(db_cart)
     db.commit()
-    db.refresh(db_customer)
+    db.refresh(db_cart)
+    return db_cart
 
 
