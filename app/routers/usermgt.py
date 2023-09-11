@@ -70,3 +70,5 @@ def create_shopping_cart(cart_usermgt: schemas.ShoppingCartRequest, db_usermgt: 
         print("---")
     db_cart = crud.create_shopping_cart(db_usermgt, cart_usermgt)
     return f"cart_id: {db_cart.id}"
+
+
