@@ -49,3 +49,11 @@ def create_shopping_cart(db: Session, shopping_cart: schemas.ShoppingCartRequest
     return db_cart
 
 
+def create_job_posts(db: Session, job_post: schemas.JobPostCreate):
+    db_jobs = models.JobPosts(job_reference=job_post.job_reference, job_details=job_post.job_details, job_salary=job_post.job_salary, job_category=job_post.job_category)
+
+    db.add(db_jobs)
+    db.commit()
+    db.refresh(db_jobs)
+
+    return db_jobs

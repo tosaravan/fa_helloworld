@@ -36,3 +36,14 @@ class ShoppingItem(Base):
     cart = relationship("ShoppingCart", back_populates="items")
 
 
+class JobPosts(Base):
+    __tablename__ = "Job Posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    job_reference = Column(String)
+    job_details = Column(String)
+    job_salary = Column(Float)
+    job_category = Column(String)
+    is_active = Column(Boolean, default=True)
+
+

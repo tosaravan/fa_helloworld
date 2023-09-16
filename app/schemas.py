@@ -30,3 +30,21 @@ class ShoppingItemRequest(BaseModel):
 class ShoppingCartRequest(BaseModel):
     customer_name: str
     items: List[ShoppingItemRequest]
+
+
+class JobPostBase(BaseModel):
+    job_reference: str
+    job_details: str
+    job_salary: float
+    job_category: str
+
+
+class JobPostCreate(JobPostBase):
+
+    id: int
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
