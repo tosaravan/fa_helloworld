@@ -46,6 +46,7 @@ def create_shopping_cart(db: Session, shopping_cart: schemas.ShoppingCartRequest
     db.add(db_cart)
     db.commit()
     db.refresh(db_cart)
+
     return db_cart
 
 
@@ -57,3 +58,12 @@ def create_job_posts(db: Session, job_post: schemas.JobPostCreate):
     db.refresh(db_jobs)
 
     return db_jobs
+
+
+def get_job_posts_id(db: Session, post_id: int):
+    return db.query(models.JobPosts).filter(models.JobPosts.id == post_id).first()
+
+
+def get_job_posts(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.JobPosts).offset(skip).limit(limit).all()
+
