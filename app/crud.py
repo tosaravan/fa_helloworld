@@ -67,3 +67,6 @@ def get_job_posts_id(db: Session, post_id: int):
 def get_job_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.JobPosts).offset(skip).limit(limit).all()
 
+
+def get_job_post_cate(db: Session, job_category: str):
+    return db.query(models.JobPosts).filter(models.JobPosts.job_category == job_category).first()

@@ -29,3 +29,7 @@ def get_job_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 def get_job_posts_id(post_id: int, db: Session = Depends(get_db)):
     return crud.get_job_posts_id(db, post_id=post_id)
 
+
+@router.get("/job_category")
+def get_job_post_category(job_category: str,db: Session = Depends(get_db)):
+    return crud.get_job_post_cate(db,job_category=job_category)
