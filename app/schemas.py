@@ -48,3 +48,15 @@ class JobPostCreate(JobPostBase):
         orm_mode = True
 
 
+# Response Model ( Chef's FullName , Speciality Cuisine and City)
+class ChefBase(BaseModel):
+    full_name: str
+    speciality_cuisine: str
+    city: str
+
+
+# To Create Chef's
+class ChefCreate(ChefBase):
+    mobile: str
+    email: str
+    id: int

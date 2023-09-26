@@ -70,3 +70,29 @@ def get_job_posts(db: Session, skip: int = 0, limit: int = 100):
 
 def get_job_post_cate(db: Session, job_category: str):
     return db.query(models.JobPosts).filter(models.JobPosts.job_category == job_category).first()
+
+
+def create_chef(db: Session, chef_info: schemas.ChefCreate):
+    db_chef = models.Chef(full_name=chef_info.full_name, speciality_cuisine=chef_info.speciality_cuisine, city=chef_info.city, mobile=chef_info.mobile, email=chef_info.email )
+
+    db.add(db_chef)
+    db.commit()
+    db.refresh(db_chef)
+
+    return db_chef
+
+
+def get_chefs(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Chef).offset(skip).limit(limit).all()
+
+
+def get_chef_id(db: Session, chef_id: int):
+    return db.query(models.Chef).filter(models.Chef.id == chef_id).first()
+
+
+def get_chef_email(db: Session, chef_mail: str):
+    return db.query(models.Chef).filter(models.Chef.email == chef_mail).first()
+
+
+def get_chef_place(db: Session, chef_place: str):
+    return db.query(models.Chef).filter(models.Chef.city == chef_place).first()

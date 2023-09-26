@@ -47,3 +47,13 @@ class JobPosts(Base):
     is_active = Column(Boolean, default=True)
 
 
+class Chef(Base):
+    __tablename__ = "Chef Posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String)
+    speciality_cuisine = Column(String)
+    city = Column(String)
+    mobile = Column(Integer)
+    email = Column(String)
+    is_active = Column(Boolean, default=True)
