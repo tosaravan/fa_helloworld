@@ -31,5 +31,5 @@ def get_job_posts_id(post_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/job_category")
-def get_job_post_category(job_category: str,db: Session = Depends(get_db)):
-    return crud.get_job_post_cate(db,job_category=job_category)
+def get_job_post_category(job_category: str, db: Session = Depends(get_db)):
+    return crud.get_job_post_cate(db, job_category=job_category)
