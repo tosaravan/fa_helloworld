@@ -48,10 +48,10 @@ class JobPosts(Base):
 
 
 class Chef(Base):
-    __tablename__ = "Chef Posts"
+    __tablename__ = "Chefs"
 
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String)
+    full_name = Column(String, index=True)
     speciality_cuisine = Column(String)
     city = Column(String)
     mobile = Column(Integer)
