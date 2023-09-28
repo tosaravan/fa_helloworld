@@ -26,7 +26,7 @@ def create_chef(chef: schemas.ChefCreate, db: Session = Depends(get_db)):
     return chef_base
 
 
-@router.get('/', response_model=schemas.ChefBase )
+@router.get('/', )
 def get_chefs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     all_chefs = crud.get_chefs(db=db, skip=skip, limit=limit)
 
