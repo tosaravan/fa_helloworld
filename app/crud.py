@@ -95,4 +95,4 @@ def get_chef_email(db: Session, chef_mail: str):
 
 
 def get_chef_place(db: Session, chef_place: str):
-    return db.query(models.Chef).filter(models.Chef.city == chef_place).first()
+    return db.query(models.Chef).filter(models.Chef.city == chef_place).all()
