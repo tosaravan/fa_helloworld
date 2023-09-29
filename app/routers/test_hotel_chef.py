@@ -66,6 +66,8 @@ def test_get_chef_by_email():
 
 def test_get_chef_by_city():
     response = client.get("/chefs/city?chef_city=London")
+    print(response.status_code)
+    print(response.json())
     assert response.status_code == 200
     response_json = response.json()
     assert response_json["city"] == "London"
