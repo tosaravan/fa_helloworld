@@ -33,7 +33,7 @@ def get_chefs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return all_chefs
 
 
-@router.get('/{chef_id}')
+@router.get('/id')
 def get_chef_id(chef_id: int, db: Session = Depends(get_db)):
     return crud.get_chef_id(chef_id=chef_id, db=db)
 

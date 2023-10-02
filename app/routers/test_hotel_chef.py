@@ -49,7 +49,7 @@ def test_get_chefs():
 
 
 def test_get_chef_by_id():
-    # Assuming you have an existing chef with ID 1 in your test database
+
     response = client.get("/chefs/id?chef_id=1")
     assert response.status_code == 200
     response_json = response.json()
@@ -57,7 +57,7 @@ def test_get_chef_by_id():
 
 
 def test_get_chef_by_email():
-    # Assuming you have an existing chef with email "johndoe@example.com" in your test database
+
     response = client.get("/chefs/email?chef_mail=k@g.com")
     assert response.status_code == 200
     response_json = response.json()
@@ -65,6 +65,7 @@ def test_get_chef_by_email():
 
 
 def test_get_chef_by_city():
+
     response = client.get("/chefs/city?chef_city=London")
     print(response.status_code)
     print(response.json())
