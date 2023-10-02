@@ -57,3 +57,14 @@ class Chef(Base):
     mobile = Column(Integer)
     email = Column(String)
     is_active = Column(Boolean, default=True)
+
+
+class Customers(Base):
+    __tablename__ = "Customer"
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String, index=True)
+    city = Column(String)
+    mobile = Column(Integer)
+    email = Column(String)
+    is_active = Column(Boolean, default=True)

@@ -96,3 +96,28 @@ def get_chef_email(db: Session, chef_mail: str):
 
 def get_chef_place(db: Session, chef_place: str):
     return db.query(models.Chef).filter(models.Chef.city == chef_place).all()
+
+
+def create_customer(db: Session, customer_info: schemas.CustomerBase):
+    db_customers = models.Customers(full_name=customer_info.full_name, city=customer_info.city, mobile=customer_info.mobile, email=customer_info.email)
+
+    db.add(db_customers)
+    db.commit()
+    db.refresh(db_customers)
+
+
+def get_customers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Customers).offset(skip).limit(limit).all()
+
+
+def get_customer_id(db: Session, customer_id: int):
+    return db.query(models.Customers).filter(models.Customers.id == customer_id).first()
+
+
+def get_customer_email(db: Session, customer_email: str):
+    return db.query(models.Customers).filter(models.Customers.email == customer_email).first()
+
+
+def get_customer_city(db: Session, customer_city: str):
+    return db.query(models.Customers).filter(models.Customers.city == customer_city).first()
+

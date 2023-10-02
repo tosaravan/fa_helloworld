@@ -60,3 +60,22 @@ class ChefCreate(ChefBase):
     mobile: str
     email: str
     id: int
+
+
+class CustomerBase(BaseModel):
+
+    full_name: str
+    city: str
+    mobile: str
+    email: str
+
+
+class CustomerCreate(CustomerBase):
+
+    id: int
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
