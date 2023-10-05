@@ -25,9 +25,9 @@ def get_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
     return all_customers
 
 
-@router.get("/id", )
-def get_customer_id(customers_id: int, db: Session = Depends(get_db)):
-    return crud.get_customer_id(customer_id=customers_id, db=db)
+@router.get("/{customer_id}")
+def get_customer_by_id(customer_id: int, db: Session = Depends(get_db)):
+    return crud.get_customer_id(customer_id=customer_id, db=db)
 
 
 @router.get("/email", )
