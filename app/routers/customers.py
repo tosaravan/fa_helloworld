@@ -4,8 +4,9 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
+from app import crud, pydantic_models
 from app.dbutil import get_db
+from app.pydantic_models import CustomerBase
 
 router = APIRouter(
     prefix="/customers",
@@ -13,15 +14,15 @@ router = APIRouter(
 )
 
 
-# @router.post("/", response_model=schemas.CustomerBase)
-# def create_customer(Customer: schemas.CustomerBase, db: Session = Depends(get_db)):
+# @router.post("/", response_model=CustomerBase)
+# def create_customer(Customer: CustomerBase, db: Session = Depends(get_db)):
 #     return crud.create_customer(customer_info=Customer, db=db)
 
-@router.post("/", response_model=schemas.CustomerBase)
-def create_customer(Customer: schemas.CustomerBase, db: Session = Depends(get_db)):
-    db_customer = crud.create_customer(customer_info=Customer, db=db)
+@router.post("/", response_model=CustomerBase)
+def create_customer(customer: CustomerBase, db: Session = Depends(get_db)):
+    db_customer = crud.create_customer(customer_info=customer, db=db)
 
-    customer_base = schemas.CustomerBase(
+    customer_base = CustomerBase(
         full_name=db_customer.full_name,
         city=db_customer.city,
         mobile=db_customer.mobile,

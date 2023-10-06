@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app import models
+from app import db_models
 from app.database import engine
 from app.main import app
 
@@ -35,16 +35,18 @@ def test_create_customer():
     assert response_json["city"] == "London"
 
 
+
 def test_get_customers():
 
     response = client.get("/customers/")
+    print(f"Response status code: {response.status_code}")
+    print(f"Response JSON: {response.json()}")
     assert response.status_code == 200
     response_json = response.json()
     assert isinstance(response_json, list)
 
 
 def test_get_customers_by_id():
-
     response = client.get("/customers/1")
     assert response.status_code == 200
     response_json = response.json()
@@ -52,19 +54,17 @@ def test_get_customers_by_id():
 
 
 def test_get_customers_by_email():
-
-    response = client.get("/customers/email?customers_mail=k%40g.com")
+    response = client.get("/customers/email?customers_mail=kam@gam.com")
     assert response.status_code == 200
     response_json = response.json()
-    assert response_json["email"] == "k@g.com"
+    assert response_json["email"] == "kam@gam.com"
 
 
 def test_get_customers_by_city():
-
-    response = client.get("/customers/city?customers_city=Manchester")
+    response = client.get("/customers/city?customers_city=London")
     assert response.status_code == 200
     response_json = response.json()
-    assert response_json["city"] == "Manchester"
+    assert response_json["city"] == "London"
 
 
 

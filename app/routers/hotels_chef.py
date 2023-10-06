@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
+from app import crud, pydantic_models
 from app.dbutil import get_db
 
 router = APIRouter(
@@ -13,11 +13,11 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=schemas.ChefBase)
-def create_chef(chef: schemas.ChefCreate, db: Session = Depends(get_db)):
+@router.post("/", response_model=pydantic_models.ChefBase)
+def create_chef(chef: pydantic_models.ChefCreate, db: Session = Depends(get_db)):
     db_chef = crud.create_chef(chef_info=chef, db=db)
 
-    chef_base = schemas.ChefBase(
+    chef_base = pydantic_models.ChefBase(
         full_name=db_chef.full_name,
         speciality_cuisine=db_chef.speciality_cuisine,
         city=db_chef.city

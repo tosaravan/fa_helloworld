@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import crud, schemas, models
+from app import crud, pydantic_models, db_models
 from app.dbutil import get_db
 
 # Defining a Router
@@ -50,8 +50,8 @@ async def hello(name, age):
     return {"name": name, "age": age}
 
 
-@router.post('/', response_model=schemas.User, )
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+@router.post('/', response_model=pydantic_models.User, )
+def create_user(user: pydantic_models.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
 
     if db_user:
@@ -61,7 +61,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post('/cart', )
-def create_shopping_cart(cart_usermgt: schemas.ShoppingCartRequest, db_usermgt: Session = Depends(get_db)):
+def create_shopping_cart(cart_usermgt: pydantic_models.ShoppingCartRequest, db_usermgt: Session = Depends(get_db)):
     print(cart_usermgt.customer_name)
     for item in cart_usermgt.items:
         print("Product Name:", item.product_name)

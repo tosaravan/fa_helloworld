@@ -1,13 +1,13 @@
 from fastapi import Depends, FastAPI
 
-from . import models
+from . import db_models
 from .database import engine
 from .dependencies import get_query_token, get_token_header
 from .internal import admin
 from .routers import items, users, usermgt, it_comp, tutorialspoint, hotels_chef, customers
 
 print("1")
-models.Base.metadata.create_all(bind=engine)
+db_models.Base.metadata.create_all(bind=engine)
 
 
 print("2")
