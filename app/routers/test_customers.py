@@ -43,3 +43,29 @@ def test_get_customers():
     assert isinstance(response_json, list)
 
 
+def test_get_customers_by_id():
+
+    response = client.get("/customers/1")
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["id"] == 1
+
+
+def test_get_customers_by_email():
+
+    response = client.get("/customers/email?customers_mail=k%40g.com")
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["email"] == "k@g.com"
+
+
+def test_get_customers_by_city():
+
+    response = client.get("/customers/city?customers_city=Manchester")
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json["city"] == "Manchester"
+
+
+
+

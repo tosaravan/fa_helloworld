@@ -104,6 +104,7 @@ def create_customer(db: Session, customer_info: schemas.CustomerBase):
     db.add(db_customers)
     db.commit()
     db.refresh(db_customers)
+    return db_customers
 
 
 def get_customers(db: Session, skip: int = 0, limit: int = 100):
