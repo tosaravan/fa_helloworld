@@ -10,9 +10,9 @@ client = TestClient(app)
 
 @pytest.fixture()
 def test_db():
-    models.Base.metadata.create_all(bind=engine)
+    db_models.Base.metadata.create_all(bind=engine)
     yield
-    models.Base.metadata.drop_all(bind=engine)
+    db_models.Base.metadata.drop_all(bind=engine)
 
 
 test_chef = {
@@ -21,9 +21,9 @@ test_chef = {
         "city": "London",
         "mobile": "1234567890",
         "email": "k@g.com",
-        "id": 1  # Ensure that data types match the model
+        "id": 1 
     }
-# Test the create_chef API
+
 
 
 def test_create_chef():

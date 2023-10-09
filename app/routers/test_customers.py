@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app import db_models
-from app.database import engine
+from app import db_models, pydantic_models
+from app.database import engine, SessionLocal
 from app.main import app
 
 client = TestClient(app)
@@ -10,9 +10,9 @@ client = TestClient(app)
 
 @pytest.fixture()
 def test_db():
-    models.Base.metadata.create_all(bind=engine)
+    db_models.Base.metadata.create_all(bind=engine)
     yield
-    models.Base.metadata.drop_all(bind=engine)
+    db_models.Base.metadata.drop_all(bind=engine)
 
 
 test_customer = {
@@ -65,7 +65,4 @@ def test_get_customers_by_city():
     assert response.status_code == 200
     response_json = response.json()
     assert response_json["city"] == "London"
-
-
-
 
