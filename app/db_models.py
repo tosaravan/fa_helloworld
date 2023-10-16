@@ -68,3 +68,13 @@ class Customer(Base):
     mobile = Column(Integer)
     email = Column(String)
     is_active = Column(Boolean, default=True)
+
+
+class ChefCustomerLink(Base):
+    __tablename__ = "chef_customer_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    chef_id = Column(Integer, ForeignKey("Chefs.id"))
+    customer_id = Column(Integer, ForeignKey("Customer.id"))
+    description = Column(String)
+

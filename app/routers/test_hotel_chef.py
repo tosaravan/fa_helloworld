@@ -73,3 +73,41 @@ def test_get_chef_by_city():
     response_json = response.json()
     assert response_json["city"] == "London"
 
+
+def test_link_customer_with_chef():
+    # Define the payload for linking the customer with the chef
+    link_data = {
+        "description": "Customer likes Indian food"
+    }
+
+    # Send a POST request to link the customer with the chef, including the IDs in the URL
+    response = client.post("/chefs/1/customers/2", json=link_data)
+
+    # Check the response status code
+    assert response.status_code == 200
+
+    # Check the response JSON
+    response_json = response.json()
+    assert response_json["description"] == "Customer likes Indian food"
+    assert response_json["status"] == "Customer linked with Chef"
+
+
+def test_non_existent_chef():
+    link_data = {
+        "description": "Customer likes Indian food"
+    }
+    response = client.post("/chefs/999/customer/2", json=link_data)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Chef Not Found"
+
+
+
+def test_non_existent_customer():
+    link_data = {
+        "description": "Customer Likes Indian Food"
+    }
+    response = client.post("/chefs/1/customer/999", json=link_data)
+    assert response.status_code == 404
+
+
+

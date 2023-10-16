@@ -23,7 +23,7 @@ class User(UserBase):
 
 class ShoppingItemRequest(BaseModel):
     product_name: str
-    product_cost:  float
+    product_cost: float
     total_units: int
 
 
@@ -40,7 +40,6 @@ class JobPostBase(BaseModel):
 
 
 class JobPostCreate(JobPostBase):
-
     id: int
     is_active: bool
 
@@ -63,7 +62,6 @@ class ChefCreate(ChefBase):
 
 
 class CustomerBase(BaseModel):
-
     full_name: str
     city: str
     mobile: str
@@ -71,7 +69,6 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-
     id: int
     is_active: bool
 
@@ -79,3 +76,6 @@ class CustomerCreate(CustomerBase):
         orm_mode = True
 
 
+# This is the Models for linking the Customer and Chefs
+class LinkCustomerWithChefInput(BaseModel):
+    description: str

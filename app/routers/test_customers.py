@@ -61,7 +61,9 @@ def test_get_customers_by_email():
 
 
 def test_get_customers_by_city():
-    response = client.get("/customers/city?customers_city=London")
+    response = client.get("/customers/city?customer_city=London")
+    print(f"Response status code: {response.status_code}")
+    print(f"Response JSON: {response.json()}")
     assert response.status_code == 200
     response_json = response.json()
     assert response_json["city"] == "London"

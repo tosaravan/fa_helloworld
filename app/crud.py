@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_
 from . import db_models, pydantic_models
 from .helper import *
@@ -26,8 +26,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: pydantic_models.UserCreate):
     hashed_password = get_hashed_password(plain_text_password=user.password.encode("utf-8"))
-    db_user = db_models.User(firstname=user.firstname, lastname=user.lastname, email=user.email, mobile=user.mobile,
-                          hashed_password=hashed_password)
+    db_user = db_models.User(firstname=user.firstname, lastname=user.lastname, email=user.email, mobile=user.mobile, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -121,4 +120,19 @@ def get_customer_email(db: Session, customer_email: str):
 
 def get_customer_city(db: Session, customer_city: str):
     return db.query(db_models.Customer).filter(db_models.Customer.city == customer_city).first()
+
+
+def create_chef_customer_link(db: Session, chef_id: int, customer_id: int, description: str):
+    link = db_models.ChefCustomerLink(chef_id=chef_id, customer_id=customer_id, description=description)
+    db.add(link)
+    db.commit()
+    db.refresh(link)
+    return link
+
+
+def get_customer_for_chef(db: Session, chef_id: int):
+    return db.query(db_models.Customer).join(db_models.ChefCustomerLink, db_models.ChefCustomerLink.customer_id == db_models.Customer.id).filter(db_models.ChefCustomerLink.id == chef_id).options(joinedload(db_models.Customer)).all()
+    # return db.query(db_models.ChefCustomerLink).filter(db_models.ChefCustomerLink.chef_id == chef_id).all()
+
+
 
