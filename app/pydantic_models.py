@@ -76,6 +76,12 @@ class CustomerCreate(CustomerBase):
         orm_mode = True
 
 
-# This is the Models for linking the Customer and Chefs
-class LinkCustomerWithChefInput(BaseModel):
+class CustomerWithChefLink(BaseModel):
+    id: int
+    full_name: str
+    mobile: str
+    email: str
     description: str
+
+    class Config:
+        orm_mode = True

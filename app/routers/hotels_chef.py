@@ -49,7 +49,7 @@ def get_chef_place(chef_city: str, db: Session = Depends(get_db)):
 
 
 @router.post("/{chef_id}/customers/{customer_id}")
-def link_customer_with_chef(chef_id: int, customer_id: int, link_data: pydantic_models.LinkCustomerWithChefInput, db: Session = Depends(get_db)):
+def link_customer_with_chef(chef_id: int, customer_id: int, link_data: pydantic_models.CustomerWithChefLink, db: Session = Depends(get_db)):
 
     # Verify if the chef exists
     chef = crud.get_chefs(db, chef_id)
@@ -73,7 +73,7 @@ def link_customer_with_chef(chef_id: int, customer_id: int, link_data: pydantic_
 
 @router.get("/{chef_id}/customer",)
 def get_customer_for_chef(chef_id: int, db: Session = Depends(get_db)):
-    customers = crud.get_customer_for_chef(chef_id=chef_id, db=db)
+    customers = crud.get_customers_for_chef(chef_id=chef_id, db=db)
     return customers
 
 

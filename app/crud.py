@@ -130,9 +130,29 @@ def create_chef_customer_link(db: Session, chef_id: int, customer_id: int, descr
     return link
 
 
-def get_customer_for_chef(db: Session, chef_id: int):
-    return db.query(db_models.Customer).join(db_models.ChefCustomerLink, db_models.ChefCustomerLink.customer_id == db_models.Customer.id).filter(db_models.ChefCustomerLink.id == chef_id).options(joinedload(db_models.Customer)).all()
-    # return db.query(db_models.ChefCustomerLink).filter(db_models.ChefCustomerLink.chef_id == chef_id).all()
+# def get_customer_for_chef(db: Session, chef_id: int):
+#     return db.query(db_models.Customer).join(db_models.ChefCustomerLink, db_models.ChefCustomerLink.customer_id == db_models.Customer.id).filter(db_models.ChefCustomerLink.id == chef_id).options(joinedload(db_models.Customer)).all()
+#     # return db.query(db_models.ChefCustomerLink).filter(db_models.ChefCustomerLink.chef_id == chef_id).all()
 
 
+def get_customers_for_chef(db: Session, chef_id: int):
+
+    links = db.query(db_models.ChefCustomerLink).filter(db_models.ChefCustomerLink.chef_id == chef_id).all()
+
+    customers_list = []
+
+    for link in links:
+        customer = db.query(db_models.Customer).filter(db_models.Customer.id == link.customer_id).first()
+
+        if customer:
+            customer_details = pydantic_models.CustomerWithChefLink(
+                id=customer.id,
+                full_name=customer.full_name,
+                mobile=customer.mobile,
+                email=customer.email,
+                description=link.description
+            )
+            customers_list.append(customer_details)
+
+    return customers_list
 
